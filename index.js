@@ -11,9 +11,6 @@ app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 
 app.use("/", Auth);
-app.set("/", (req, res) => {
-  res.json({ message: "deneme" });
-});
 
 db();
 app.listen(process.env.PORT, () => {
