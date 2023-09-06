@@ -2,7 +2,7 @@ const PostSchema = require("../models/post");
 
 const getPosts = async (req, res) => {
   try {
-    const post = await PostSchema.findMany();
+    const post = await PostSchema.find({});
     res.status(200).json({
       post,
     });
@@ -14,14 +14,15 @@ const getPosts = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const { name, description, stock } = req.body;
-    if (!name) {
-      return res.status(404).json({ message: "Name cannot be empty" });
+    const existingPost = await PostSchema.findOne({
+      name: name,
+      description: description,
+    });
+    if (!name || !description || !stock) {
+      return res.status(400).json({ message: "Please fill in all fields." });
     }
-    if (!description) {
-      return res.status(404).json({ message: "Description cannot be empty" });
-    }
-    if (!stock) {
-      return res.status(404).json({ message: "Stock cannot be empty" });
+    if (existingPost) {
+      return res.status(400).json({ message: "There is such an article." });
     }
     const newPost = await PostSchema.create({ name, description, stock });
     res.status(200).json({
@@ -45,7 +46,7 @@ const getDetail = async (req, res) => {
 const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const deletePost = PostSchema.findByIdAndRemove(id);
+    await PostSchema.findByIdAndRemove(id);
     res.status(201).json({
       message: "Deletion successful",
     });
@@ -57,15 +58,15 @@ const deletePost = async (req, res) => {
 const getUpdate = async (req, res) => {
   try {
     const { id } = req.params;
-    const updatePost = PostSchema.findByIdAndUpdate(id, req.body, {
+    const updatePost = await PostSchema.findByIdAndUpdate(id, req.body, {
       new: true,
     });
     res.status(201).json({
       updatePost,
     });
-  } catch (err) {
+  } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-module.exports = { deletePost, createPost, getDetail, getPosts, getUpdate };
+module.exports = { getPosts, createPost, getDetail, deletePost, getUpdate };
