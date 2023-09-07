@@ -69,4 +69,27 @@ const getUpdate = async (req, res) => {
   }
 };
 
-module.exports = { getPosts, createPost, getDetail, deletePost, getUpdate };
+const searchPost = async (req, res) => {
+  const { search, tag } = req.query;
+  try {
+    const title = new RegExp(search, "i");
+    const searchedPost = await PostSchema.find({
+      $or: [{ name: title }],
+      description: { $in: tag.split(",") },
+    });
+    res.status(200).json({
+      searchedPost,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  getPosts,
+  createPost,
+  getDetail,
+  deletePost,
+  getUpdate,
+  searchPost,
+};
