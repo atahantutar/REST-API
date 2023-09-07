@@ -6,12 +6,15 @@ const {
   getDetail,
   deletePost,
   getUpdate,
+  searchPost,
 } = require("../controllers/post.js");
+const auth = require("../middleware/auth.js");
 
+router.get("/searchPost", searchPost);
 router.get("/getPosts", getPosts);
-router.post("/createPost", createPost);
+router.post("/createPost", auth, createPost);
 router.get("/getDetail/:id", getDetail);
-router.delete("/deletePost/:id", deletePost);
-router.get("/getUpdate/:id", getUpdate);
+router.delete("/deletePost/:id", auth, deletePost);
+router.get("/getUpdate/:id", auth, getUpdate);
 
 module.exports = router;
