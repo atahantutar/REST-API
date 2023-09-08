@@ -21,15 +21,11 @@ const register = async (req, res) => {
       password: passwordHash,
     });
 
-    const userToken = jwt.sign({ id: newUser }, process.env.SECRET_TOKEN, {
+    const userToken = jwt.sign({ id: newUser._id }, process.env.SECRET_TOKEN, {
       expiresIn: "1h",
     });
 
-    res.status(201).json({
-      status: "OK",
-      newUser,
-      userToken,
-    });
+    res.header("Authorization", userToken).json({ accessToken: userToken });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -49,14 +45,10 @@ const login = async (req, res) => {
         .status(500)
         .json({ message: "Your password or email address is incorrect." });
     }
-    const token = jwt.sign({ id: user }, process.env.SECRET_TOKEN, {
+    const token = jwt.sign({ id: user._id }, process.env.SECRET_TOKEN, {
       expiresIn: "1h",
     });
-    res.status(200).json({
-      status: "OK",
-      user,
-      token,
-    });
+    res.header("Authorization", token).json({ accessToken: token });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
