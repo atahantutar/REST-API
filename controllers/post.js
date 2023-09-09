@@ -47,7 +47,7 @@ const deletePost = async (req, res) => {
   try {
     const { id } = req.params;
     await PostSchema.findByIdAndRemove(id);
-    res.status(201).json({
+    res.status(200).json({
       message: "Deletion successful",
     });
   } catch (err) {
